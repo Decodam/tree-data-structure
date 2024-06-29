@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import TreeNode from './TreeNode';
+import { undoAction, redoAction, updateNodeValueAction } from './redux/store';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const tree = useSelector((state) => state.tree);
+
+  const updateNodeValue = (nodeId, newValue) => {
+    dispatch(updateNodeValueAction(nodeId, newValue));
+  };
+
+  const handleUndo = () => {
+    dispatch(undoAction());
+  };
+
+  const handleRedo = () => {
+    dispatch(redoAction());
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={handleUndo} disabled={currentVersion <= 0}>
+        Undo
+      </button>
+      <button onClick={handleRedo} disabled={currentVersion >= history.length - 1}>
+        Redo
+      </button>
+      <TreeNode node={tree} updateNodeValue={updateNodeValue} />
     </div>
   );
-}
+};
 
 export default App;
